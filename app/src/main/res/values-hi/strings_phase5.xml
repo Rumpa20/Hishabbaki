@@ -231,4 +231,13 @@
     <string name="current_pin_wrong">वर्तमान पिन गलत</string>
     <string name="backspace">⌫</string>
     <string name="auto_backup_label">स्वचालित दैनिक बैकअप</string>
+<string name="businesses">व्यवसाय</string>
+<string name="my_business">मेरा व्यवसाय</string>
+<string name="active">सक्रिय</string>
+<string name="add_business">व्यवसाय जोड़ें</string>
+<string name="business_name">व्यवसाय का नाम</string>
+<string name="business_switched">व्यवसाय बदल गया</string>
+<string name="delete_business">व्यवसाय हटाएँ</string>
+<string name="delete_business_confirm">\"%1$s\" हटाएँ? इस व्यवसाय के सभी ग्राहक, सप्लायर, इनवॉइस, उत्पाद, खर्च, कैशबुक और कर्मचारी स्थायी रूप से हट जाएँगे। पहले बैकअप लें।</string>
+<string name="error_business_name">कृपया व्यवसाय का नाम दर्ज करें</string>
 </resources>

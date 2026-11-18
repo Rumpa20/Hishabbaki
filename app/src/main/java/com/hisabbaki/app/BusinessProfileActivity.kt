@@ -22,6 +22,8 @@ import com.hisabbaki.app.util.LogoStore
 class BusinessProfileActivity : AppCompatActivity() {
 
     companion object {
+        const val EXTRA_BUSINESS_ID = "business_id"
+
         private val MOBILE_PATTERN = Regex("^[6-9][0-9]{9}\$")
         private val GSTIN_PATTERN = Regex("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]\$")
         private const val STATE_LOGO = "state_logo"
@@ -66,7 +68,8 @@ class BusinessProfileActivity : AppCompatActivity() {
 
         findViewById<MaterialToolbar>(R.id.toolbar).setNavigationOnClickListener { finish() }
 
-        businessId = Prefs.currentBusinessId(this)
+        businessId = intent.getIntExtra(EXTRA_BUSINESS_ID, Prefs.currentBusinessId(this))
+            .let { if (it == 0) Prefs.currentBusinessId(this) else it }
         tilMobile = findViewById(R.id.tilBizMobile)
         tilGstin = findViewById(R.id.tilGstin)
         etName = findViewById(R.id.etBizName)
@@ -102,7 +105,16 @@ class BusinessProfileActivity : AppCompatActivity() {
     private fun load() {
         val appCtx = applicationContext
         Db.async({
-            val profile = Repository.get(appCtx).getBusinessProfile()
+            val profile =
+                if (businessId == Prefs.currentBusinessId(appCtx)) {
+                    Repository.get(appCtx).getBusinessProfile()
+                } else {
+                    val b = com.hisabbaki.app.data.CoreRepo.get(appCtx).getBusiness(businessId)
+                        ?: throw IllegalStateException("Business not found")
+                    com.hisabbaki.app.data.BusinessProfile(
+                        b.id, b.name, b.owner, b.mobile, b.address, b.gstin, b.logoPath, b.upiId
+                    )
+                }
             Pair(profile, if (profile.logoPath.isNotBlank())
                 LogoStore.loadFile(appCtx, profile.id) else null)
         }) { result ->
@@ -157,13 +169,13 @@ class BusinessProfileActivity : AppCompatActivity() {
         if (!valid) return
 
         val profile = BusinessProfile(
-            id = Prefs.currentBusinessId(this),
+            id = businessId,
             name = etName.text.toString().trim(),
             owner = etOwner.text.toString().trim(),
             mobile = mobile,
             address = etAddress.text.toString().trim(),
             gstin = gstin,
-            logoPath = if (hasLogo) LogoStore.fileNameFor(Prefs.currentBusinessId(this)) else "",
+            logoPath = if (hasLogo) LogoStore.fileNameFor(businessId) else "",
             upiId = etUpiId.text.toString().trim()
         )
         btnSave.isEnabled = false

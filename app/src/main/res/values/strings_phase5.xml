@@ -231,4 +231,13 @@
     <string name="current_pin_wrong">Current PIN is wrong</string>
     <string name="backspace">⌫</string>
     <string name="auto_backup_label">Automatic daily backup</string>
+<string name="businesses">Businesses</string>
+<string name="my_business">My Business</string>
+<string name="active">Active</string>
+<string name="add_business">Add business</string>
+<string name="business_name">Business name</string>
+<string name="business_switched">Business switched</string>
+<string name="delete_business">Delete business</string>
+<string name="delete_business_confirm">Delete \"%1$s\"? All customers, suppliers, invoices, products, expenses, cashbook and staff of this business will be removed permanently. Take a backup first.</string>
+<string name="error_business_name">Please enter a business name</string>
 </resources>
