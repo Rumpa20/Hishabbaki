@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_call"
+        android:icon="@drawable/ic_call"
+        android:title="@string/call"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_edit_party"
+        android:icon="@drawable/ic_edit"
+        android:title="@string/edit"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_reminder"
+        android:title="@string/send_reminder"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_whatsapp"
+        android:title="@string/whatsapp"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_share_pdf"
+        android:title="@string/share_ledger"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_download_pdf"
+        android:title="@string/download_pdf"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_print"
+        android:title="@string/print_ledger"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_export_csv"
+        android:title="@string/export_csv"
+        app:showAsAction="never" />
+</menu>

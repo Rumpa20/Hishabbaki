@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">તમારી ડિજિટલ ખાતાવહી</string>
+    <string name="home">હોમ</string>
+    <string name="customers">ગ્રાહકો</string>
+    <string name="cash_book">કેશ બુક</string>
+    <string name="settings">સેટિંગ્સ</string>
+    <string name="theme">થીમ</string>
+    <string name="theme_light">લાઇટ</string>
+    <string name="theme_dark">ડાર્ક</string>
+    <string name="theme_system">સિસ્ટમ</string>
+    <string name="language">ભાષા</string>
+    <string name="you_will_get">તમને મળશે</string>
+    <string name="you_will_give">તમારે આપવાના</string>
+</resources>

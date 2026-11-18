@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_restore">Backup and restore</string>
+    <string name="backup_note">A backup contains your customers, suppliers, transactions and business details. The logo image is not included. Keep the backup file safe.</string>
+    <string name="backup_create">Create backup</string>
+    <string name="backup_restore_action">Restore</string>
+    <string name="backup_saved">Backup saved</string>
+    <string name="backup_failed">Could not create the backup</string>
+    <string name="restore_invalid">This file is not a valid Hisab Baki backup</string>
+    <string name="restore_corrupt">The backup file is damaged</string>
+    <string name="restore_newer">This backup was made by a newer version of the app</string>
+    <string name="restore_confirm_title">Restore backup?</string>
+    <string name="restore_confirm_msg">This backup has %1$d customers, %2$d suppliers and %3$d transactions.\n\nAll current data will be replaced. A safety copy of your current data is kept inside the app.\n\nContinue?</string>
+    <string name="restore_confirm_btn">Restore</string>
+    <string name="restore_done">Backup restored</string>
+    <string name="restore_failed">Could not restore the backup</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_text">Hisab Baki Pro stores all your data (customers, suppliers, transactions and business details) only on your phone. The app works offline and does not need an account.\n\nWe do not collect, upload or sell your data. No analytics or advertising tools are used.\n\nThe app opens your phone dialer, WhatsApp, SMS or sharing apps only when you tap a button, and only the content you choose (for example a reminder message or a PDF) is passed to them. You always confirm before anything is sent.\n\nBackups and exports are saved to the location you choose. Please keep them safe because they contain your business records.\n\nIf you uninstall the app or clear its data without a backup, your records cannot be recovered. Create backups regularly in Settings > Backup and restore.</string>
+    <string name="about_offline">Works fully offline. Your data stays on this device.</string>
+</resources>

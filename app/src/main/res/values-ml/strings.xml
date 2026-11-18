@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">നിങ്ങളുടെ ഡിജിറ്റൽ കണക്ക് പുസ്തകം</string>
+    <string name="home">ഹോം</string>
+    <string name="customers">ഉപഭോക്താക്കൾ</string>
+    <string name="cash_book">ക്യാഷ് ബുക്ക്</string>
+    <string name="settings">ക്രമീകരണങ്ങൾ</string>
+    <string name="theme">തീം</string>
+    <string name="theme_light">ലൈറ്റ്</string>
+    <string name="theme_dark">ഡാർക്ക്</string>
+    <string name="theme_system">സിസ്റ്റം</string>
+    <string name="language">ഭാഷ</string>
+    <string name="you_will_get">നിങ്ങൾക്ക് കിട്ടാനുള്ളത്</string>
+    <string name="you_will_give">നിങ്ങൾ കൊടുക്കാനുള്ളത്</string>
+</resources>
