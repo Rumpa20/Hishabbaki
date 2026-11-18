@@ -33,6 +33,7 @@ class DatabaseHelper private constructor(context: Context) :
      * - transactions gain attachment_path and source_invoice_id (invoice-generated entries).
      */
     private fun upgradeTo2(db: SQLiteDatabase) {
+        db.execSQL(CREATE_BUSINESSES)
         for (sql in V2_CREATE_STATEMENTS) db.execSQL(sql)
 
         val now = System.currentTimeMillis()
@@ -138,8 +139,7 @@ class DatabaseHelper private constructor(context: Context) :
             }
         }
 
-        private val CREATE_STATEMENTS = listOf(
-            """CREATE TABLE businesses (
+        private const val CREATE_BUSINESSES = """CREATE TABLE IF NOT EXISTS businesses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL DEFAULT '',
                 owner_name TEXT NOT NULL DEFAULT '',
@@ -151,7 +151,10 @@ class DatabaseHelper private constructor(context: Context) :
                 currency TEXT NOT NULL DEFAULT 'INR',
                 created_at INTEGER NOT NULL,
                 updated_at INTEGER NOT NULL
-            )""",
+            )"""
+
+        private val CREATE_STATEMENTS = listOf(
+            CREATE_BUSINESSES,
             """CREATE TABLE business_profile (
                 id INTEGER PRIMARY KEY CHECK (id = 1),
                 business_name TEXT NOT NULL DEFAULT '',
