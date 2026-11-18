@@ -36,17 +36,22 @@ class Repository private constructor(
 
     // ------------------------------------------------------------ parties
 
+    /** Every party/transaction/reminder query is scoped to the active business. */
+    private fun biz(): Int = Prefs.currentBusinessId(appContext)
+
     private fun queryParties(
         isSupplier: Boolean,
         where: String,
         args: Array<String>,
         order: String
     ): List<Party> {
+        val bizWhere = if (where.isBlank()) "WHERE p.business_id = ?" else "$where AND p.business_id = ?"
+        val allArgs = args + arrayOf(biz().toString())
         val sql = "SELECT p.id, p.name, p.mobile, p.address, p.opening_balance_paise, p.notes, " +
             balanceExpr(isSupplier) + " AS balance FROM " + table(isSupplier) + " p " +
-            where + " ORDER BY " + order
+            bizWhere + " ORDER BY " + order
         val out = ArrayList<Party>()
-        helper.readableDatabase.rawQuery(sql, if (args.isEmpty()) null else args).use { c ->
+        helper.readableDatabase.rawQuery(sql, allArgs).use { c ->
             while (c.moveToNext()) {
                 out.add(
                     Party(
@@ -112,10 +117,14 @@ class Repository private constructor(
             cv.put("updated_at", now)
             val resultId: Long
             if (id == 0L) {
+                cv.put("business_id", biz())
                 cv.put("created_at", now)
                 resultId = db.insertOrThrow(table(isSupplier), null, cv)
             } else {
-                val rows = db.update(table(isSupplier), cv, "id = ?", arrayOf(id.toString()))
+                val rows = db.update(
+                    table(isSupplier), cv, "id = ? AND business_id = ?",
+                    arrayOf(id.toString(), biz().toString())
+                )
                 if (rows == 0) throw IllegalStateException("Record not found")
                 resultId = id
             }
@@ -128,8 +137,9 @@ class Repository private constructor(
 
     private fun mobileExists(db: SQLiteDatabase, isSupplier: Boolean, mobile: String, excludeId: Long): Boolean =
         db.rawQuery(
-            "SELECT 1 FROM " + table(isSupplier) + " WHERE mobile = ? AND id != ? LIMIT 1",
-            arrayOf(mobile, excludeId.toString())
+            "SELECT 1 FROM " + table(isSupplier) +
+                " WHERE mobile = ? AND id != ? AND business_id = ? LIMIT 1",
+            arrayOf(mobile, excludeId.toString(), biz().toString())
         ).use { it.moveToFirst() }
 
     fun countPartyTransactions(isSupplier: Boolean, id: Long): Int =
@@ -141,7 +151,10 @@ class Repository private constructor(
 
     /** Deletes a party; their transactions are removed by the foreign-key cascade. */
     fun deleteParty(isSupplier: Boolean, id: Long) {
-        helper.writableDatabase.delete(table(isSupplier), "id = ?", arrayOf(id.toString()))
+        helper.writableDatabase.delete(
+            table(isSupplier), "id = ? AND business_id = ?",
+            arrayOf(id.toString(), biz().toString())
+        )
     }
 
     // ------------------------------------------------------------ transactions
@@ -198,6 +211,7 @@ class Repository private constructor(
         cv.put("payment_method", tx.paymentMethod)
         cv.put("notes", tx.notes)
         cv.put("updated_at", now)
+        if (tx.id == 0L) cv.put("business_id", biz())
 
         db.beginTransaction()
         try {
@@ -215,7 +229,10 @@ class Repository private constructor(
                         ?: throw IllegalStateException("Transaction was rejected")
                 }
             } else {
-                val rows = db.update("transactions", cv, "id = ?", arrayOf(tx.id.toString()))
+                val rows = db.update(
+                    "transactions", cv, "id = ? AND business_id = ?",
+                    arrayOf(tx.id.toString(), biz().toString())
+                )
                 if (rows == 0) throw IllegalStateException("Transaction not found")
                 resultId = tx.id
             }
@@ -231,7 +248,10 @@ class Repository private constructor(
             .use { c -> if (c.moveToFirst()) c.getLong(0) else null }
 
     fun deleteTransaction(id: Long) {
-        helper.writableDatabase.delete("transactions", "id = ?", arrayOf(id.toString()))
+        helper.writableDatabase.delete(
+            "transactions", "id = ? AND business_id = ?",
+            arrayOf(id.toString(), biz().toString())
+        )
     }
 
     // ------------------------------------------------------------ ledger
@@ -305,13 +325,11 @@ class Repository private constructor(
         )
     }
 
-    private fun Context.activeBiz(): Int = Prefs.currentBusinessId(this)
-
-
     // ------------------------------------------------------------ reminders
 
     fun addReminder(customerId: Long, amountPaise: Long, channel: String, message: String): Long {
         val cv = ContentValues()
+        cv.put("business_id", biz())
         cv.put("customer_id", customerId)
         cv.put("amount_paise", amountPaise)
         cv.put("channel", channel)
@@ -353,8 +371,9 @@ class Repository private constructor(
                 "FROM transactions t " +
                 "LEFT JOIN customers c ON c.id = t.customer_id " +
                 "LEFT JOIN suppliers s ON s.id = t.supplier_id " +
-                "WHERE t.tx_time >= ? AND t.tx_time < ? ORDER BY t.tx_time ASC, t.id ASC",
-            arrayOf(fromMs.toString(), toMs.toString())
+                "WHERE t.tx_time >= ? AND t.tx_time < ? AND t.business_id = ? " +
+                "ORDER BY t.tx_time ASC, t.id ASC",
+            arrayOf(fromMs.toString(), toMs.toString(), biz().toString())
         ).use { c ->
             while (c.moveToNext()) {
                 out.add(
@@ -385,8 +404,12 @@ class Repository private constructor(
         }
         val sql = "SELECT p.name, p.mobile, " + sumFor(TxTypes.increase(isSupplier)) + ", " +
             sumFor(TxTypes.decrease(isSupplier)) + ", " + balanceExpr(isSupplier) +
-            " FROM " + table(isSupplier) + " p ORDER BY p.name COLLATE NOCASE ASC"
-        val args = arrayOf(fromMs.toString(), toMs.toString(), fromMs.toString(), toMs.toString())
+            " FROM " + table(isSupplier) + " p WHERE p.business_id = ? " +
+            "ORDER BY p.name COLLATE NOCASE ASC"
+        val args = arrayOf(
+            fromMs.toString(), toMs.toString(), fromMs.toString(), toMs.toString(),
+            biz().toString()
+        )
         val out = ArrayList<PartySummary>()
         helper.readableDatabase.rawQuery(sql, args).use { c ->
             while (c.moveToNext()) {
@@ -409,6 +432,7 @@ class Repository private constructor(
 
     fun getDashboard(): DashboardStats {
         val db = helper.readableDatabase
+        val bizId = biz()
 
         val cal = Calendar.getInstance()
         cal.set(Calendar.HOUR_OF_DAY, 0)
@@ -427,29 +451,39 @@ class Repository private constructor(
         val receivable = scalarLong(
             db,
             "SELECT COALESCE(SUM(b), 0) FROM (SELECT " + balanceExpr(false) +
-                " AS b FROM customers p) WHERE b > 0"
+                " AS b FROM customers p WHERE p.business_id = ?) WHERE b > 0",
+            arrayOf(bizId.toString())
         )
         val payable = scalarLong(
             db,
             "SELECT COALESCE(SUM(b), 0) FROM (SELECT " + balanceExpr(true) +
-                " AS b FROM suppliers p) WHERE b > 0"
+                " AS b FROM suppliers p WHERE p.business_id = ?) WHERE b > 0",
+            arrayOf(bizId.toString())
         )
-        val customerCount = scalarLong(db, "SELECT COUNT(*) FROM customers").toInt()
-        val supplierCount = scalarLong(db, "SELECT COUNT(*) FROM suppliers").toInt()
+        val customerCount = scalarLong(
+            db, "SELECT COUNT(*) FROM customers WHERE business_id = ?",
+            arrayOf(bizId.toString())
+        ).toInt()
+        val supplierCount = scalarLong(
+            db, "SELECT COUNT(*) FROM suppliers WHERE business_id = ?",
+            arrayOf(bizId.toString())
+        ).toInt()
         val todayCount = scalarLong(
             db,
-            "SELECT COUNT(*) FROM transactions WHERE tx_time >= ? AND tx_time < ?",
-            arrayOf(dayStart.toString(), dayEnd.toString())
+            "SELECT COUNT(*) FROM transactions WHERE tx_time >= ? AND tx_time < ? AND business_id = ?",
+            arrayOf(dayStart.toString(), dayEnd.toString(), bizId.toString())
         ).toInt()
         val monthCollection = scalarLong(
             db,
-            "SELECT COALESCE(SUM(amount_paise), 0) FROM transactions WHERE tx_type = 'GOT' AND tx_time >= ? AND tx_time < ?",
-            arrayOf(monthStart.toString(), monthEnd.toString())
+            "SELECT COALESCE(SUM(amount_paise), 0) FROM transactions " +
+                "WHERE tx_type = 'GOT' AND tx_time >= ? AND tx_time < ? AND business_id = ?",
+            arrayOf(monthStart.toString(), monthEnd.toString(), bizId.toString())
         )
         val monthPayments = scalarLong(
             db,
-            "SELECT COALESCE(SUM(amount_paise), 0) FROM transactions WHERE tx_type = 'PAYMENT' AND tx_time >= ? AND tx_time < ?",
-            arrayOf(monthStart.toString(), monthEnd.toString())
+            "SELECT COALESCE(SUM(amount_paise), 0) FROM transactions " +
+                "WHERE tx_type = 'PAYMENT' AND tx_time >= ? AND tx_time < ? AND business_id = ?",
+            arrayOf(monthStart.toString(), monthEnd.toString(), bizId.toString())
         )
 
         val recent = ArrayList<RecentTx>()
@@ -458,8 +492,9 @@ class Repository private constructor(
                 "FROM transactions t " +
                 "LEFT JOIN customers c ON c.id = t.customer_id " +
                 "LEFT JOIN suppliers s ON s.id = t.supplier_id " +
+                "WHERE t.business_id = ? " +
                 "ORDER BY t.tx_time DESC, t.id DESC LIMIT 5",
-            null
+            arrayOf(bizId.toString())
         ).use { c ->
             while (c.moveToNext()) {
                 recent.add(
