@@ -63,4 +63,27 @@
     <string name="product_stats_line">%1$dটি প্রোডাক্ট  •  কম মজুদ: %2$d  •  মূল্য: %3$s</string>
     <string name="stock_in">মজুদ যোগ</string>
     <string name="stock_out">মজুদ বাদ</string>
+    <string name="expenses">খরচ</string>
+    <string name="add_expense">নতুন খরচ</string>
+    <string name="edit_expense">খরচ সম্পাদনা</string>
+    <string name="expense_description">বিবরণ</string>
+    <string name="expense_date">তারিখ</string>
+    <string name="recur_none">একবার</string>
+    <string name="recur_daily">প্রতিদিন</string>
+    <string name="recur_weekly">প্রতি সপ্তাহে</string>
+    <string name="recur_monthly">প্রতি মাসে</string>
+    <string name="recur_repeat">পুনরাবৃত্তি</string>
+    <string name="expense_today">আজ</string>
+    <string name="expense_month">এই মাস</string>
+    <string name="no_expenses">এখনও কোনও খরচ নেই। যোগ করতে + চাপুন।</string>
+    <string name="no_expenses_search">কোনও মিল পাওয়া যায়নি</string>
+    <string name="expense_saved">খরচ সংরক্ষিত</string>
+    <string name="expense_deleted">খরচ মুছে ফেলা হয়েছে</string>
+    <string name="expense_delete_confirm">“%1$s” মুছে ফেলবেন?</string>
+    <string name="expense_stats_line">আজ: %1$s  •  এই মাস: %2$s</string>
+    <string name="error_expense_title">বিবরণ লিখুন</string>
+    <string name="error_amount">সঠিক পরিমাণ লিখুন</string>
+    <string name="all">সব</string>
+    <string name="search_expenses">খরচ খুঁজুন</string>
+    <string name="attachment_added">ছবি যুক্ত হয়েছে (বদলাতে চাপুন)</string>
 </resources>

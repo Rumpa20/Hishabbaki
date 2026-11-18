@@ -63,4 +63,27 @@
     <string name="product_stats_line">%1$d उत्पाद  •  कम स्टॉक: %2$d  •  मूल्य: %3$s</string>
     <string name="stock_in">स्टॉक जोड़ें</string>
     <string name="stock_out">स्टॉक घटाएँ</string>
+    <string name="expenses">खर्च</string>
+    <string name="add_expense">नया खर्च</string>
+    <string name="edit_expense">खर्च संपादित करें</string>
+    <string name="expense_description">विवरण</string>
+    <string name="expense_date">तारीख</string>
+    <string name="recur_none">एक बार</string>
+    <string name="recur_daily">दैनिक</string>
+    <string name="recur_weekly">साप्ताहिक</string>
+    <string name="recur_monthly">मासिक</string>
+    <string name="recur_repeat">दोहराव</string>
+    <string name="expense_today">आज</string>
+    <string name="expense_month">इस माह</string>
+    <string name="no_expenses">अभी कोई खर्च नहीं। जोड़ने के लिए + दबाएँ।</string>
+    <string name="no_expenses_search">कोई मिलान खर्च नहीं</string>
+    <string name="expense_saved">खर्च सहेजा गया</string>
+    <string name="expense_deleted">खर्च हटाया गया</string>
+    <string name="expense_delete_confirm">“%1$s” हटाएँ?</string>
+    <string name="expense_stats_line">आज: %1$s  •  इस माह: %2$s</string>
+    <string name="error_expense_title">विवरण दर्ज करें</string>
+    <string name="error_amount">मान्य राशि दर्ज करें</string>
+    <string name="all">सभी</string>
+    <string name="search_expenses">खर्च खोजें</string>
+    <string name="attachment_added">फोटो जुड়ा (बदलने के लिए दबाएँ)</string>
 </resources>

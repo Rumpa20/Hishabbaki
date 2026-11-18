@@ -63,4 +63,27 @@
     <string name="product_stats_line">%1$d products  •  Low stock: %2$d  •  Value: %3$s</string>
     <string name="stock_in">Stock in (add)</string>
     <string name="stock_out">Stock out (remove)</string>
+    <string name="expenses">Expenses</string>
+    <string name="add_expense">Add expense</string>
+    <string name="edit_expense">Edit expense</string>
+    <string name="expense_description">Description</string>
+    <string name="expense_date">Date</string>
+    <string name="recur_none">One-time</string>
+    <string name="recur_daily">Daily</string>
+    <string name="recur_weekly">Weekly</string>
+    <string name="recur_monthly">Monthly</string>
+    <string name="recur_repeat">Repeat</string>
+    <string name="expense_today">Today</string>
+    <string name="expense_month">This month</string>
+    <string name="no_expenses">No expenses yet. Tap + to record one.</string>
+    <string name="no_expenses_search">No matching expenses</string>
+    <string name="expense_saved">Expense saved</string>
+    <string name="expense_deleted">Expense deleted</string>
+    <string name="expense_delete_confirm">Delete “%1$s”?</string>
+    <string name="expense_stats_line">Today: %1$s  •  This month: %2$s</string>
+    <string name="error_expense_title">Enter a description</string>
+    <string name="error_amount">Enter a valid amount</string>
+    <string name="all">All</string>
+    <string name="search_expenses">Search expenses</string>
+    <string name="attachment_added">Photo attached (tap to replace)</string>
 </resources>

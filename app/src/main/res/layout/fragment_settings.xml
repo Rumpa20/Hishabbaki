@@ -125,6 +125,18 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/rowExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="20dp"
+                android:text="@string/expenses"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp" />
+
+            <TextView
                 android:id="@+id/rowExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
