@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Hisab Baki Pro</string>
+    <string name="tagline">Your digital ledger</string>
+    <string name="home">Home</string>
+    <string name="customers">Customers</string>
+    <string name="cash_book">Cash Book</string>
+    <string name="settings">Settings</string>
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="language">Language</string>
+    <string name="you_will_get">You will get</string>
+    <string name="you_will_give">You will give</string>
+</resources>

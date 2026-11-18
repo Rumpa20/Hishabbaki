@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">உங்கள் டிஜிட்டல் கணக்குப் புத்தகம்</string>
+    <string name="home">முகப்பு</string>
+    <string name="customers">வாடிக்கையாளர்கள்</string>
+    <string name="cash_book">கேஷ் புக்</string>
+    <string name="settings">அமைப்புகள்</string>
+    <string name="theme">தீம்</string>
+    <string name="theme_light">லைட்</string>
+    <string name="theme_dark">டார்க்</string>
+    <string name="theme_system">சிஸ்டம்</string>
+    <string name="language">மொழி</string>
+    <string name="you_will_get">நீங்கள் பெற வேண்டியது</string>
+    <string name="you_will_give">நீங்கள் கொடுக்க வேண்டியது</string>
+</resources>

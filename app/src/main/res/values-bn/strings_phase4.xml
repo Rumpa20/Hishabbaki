@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_restore">ব্যাকআপ ও রিস্টোর</string>
+    <string name="backup_note">ব্যাকআপে আপনার গ্রাহক, সরবরাহকারী, লেনদেন ও ব্যবসার বিবরণ থাকে। লোগো ছবি এতে থাকে না। ব্যাকআপ ফাইল নিরাপদে রাখুন।</string>
+    <string name="backup_create">ব্যাকআপ তৈরি করুন</string>
+    <string name="backup_restore_action">রিস্টোর</string>
+    <string name="backup_saved">ব্যাকআপ সংরক্ষিত হয়েছে</string>
+    <string name="backup_failed">ব্যাকআপ তৈরি করা যায়নি</string>
+    <string name="restore_invalid">এটি সঠিক Hisab Baki ব্যাকআপ ফাইল নয়</string>
+    <string name="restore_corrupt">ব্যাকআপ ফাইলটি নষ্ট হয়ে গেছে</string>
+    <string name="restore_newer">এই ব্যাকআপ অ্যাপের নতুন ভার্সন দিয়ে তৈরি</string>
+    <string name="restore_confirm_title">ব্যাকআপ রিস্টোর করবেন?</string>
+    <string name="restore_confirm_msg">এই ব্যাকআপে %1$d জন গ্রাহক, %2$d জন সরবরাহকারী ও %3$d টি লেনদেন আছে।\n\nবর্তমান সব তথ্য বদলে যাবে। আপনার বর্তমান তথ্যের একটি নিরাপত্তা কপি অ্যাপের ভেতরে রাখা হবে।\n\nচালিয়ে যাবেন?</string>
+    <string name="restore_confirm_btn">রিস্টোর</string>
+    <string name="restore_done">ব্যাকআপ রিস্টোর হয়েছে</string>
+    <string name="restore_failed">ব্যাকআপ রিস্টোর করা যায়নি</string>
+    <string name="privacy_policy">গোপনীয়তা নীতি</string>
+    <string name="privacy_text">Hisab Baki Pro আপনার সব তথ্য (গ্রাহক, সরবরাহকারী, লেনদেন ও ব্যবসার বিবরণ) শুধুমাত্র আপনার ফোনে সংরক্ষণ করে। অ্যাপটি অফলাইনে চলে এবং কোনো অ্যাকাউন্টের প্রয়োজন নেই।\n\nআমরা আপনার তথ্য সংগ্রহ, আপলোড বা বিক্রি করি না। কোনো অ্যানালিটিক্স বা বিজ্ঞাপনের টুল ব্যবহার করা হয় না।\n\nআপনি বোতাম চাপলেই কেবল অ্যাপ ফোনের ডায়ালার, WhatsApp, SMS বা শেয়ার অ্যাপ খোলে, এবং আপনার বেছে নেওয়া বিষয়বস্তু (যেমন রিমাইন্ডার বার্তা বা PDF) সেগুলিতে যায়। কিছু পাঠানোর আগে আপনি সবসময় নিশ্চিত করেন।\n\nব্যাকআপ ও এক্সপোর্ট ফাইল আপনার বেছে নেওয়া জায়গায় সংরক্ষিত হয়। এতে আপনার ব্যবসার হিসাব থাকে, তাই ফাইলগুলো নিরাপদ রাখুন।\n\nব্যাকআপ ছাড়া অ্যাপ আনইনস্টল করলে বা অ্যাপের ডেটা মুছলে আপনার হিসাব ফেরত পাওয়া যাবে না। সেটিংস > ব্যাকআপ ও রিস্টোর থেকে নিয়মিত ব্যাকআপ নিন।</string>
+    <string name="about_offline">সম্পূর্ণ অফলাইনে চলে। আপনার তথ্য এই ফোনেই থাকে।</string>
+</resources>

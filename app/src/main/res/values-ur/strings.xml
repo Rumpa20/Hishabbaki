@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">آپ کی ڈیجیٹل کھاتہ بہی</string>
+    <string name="home">ہوم</string>
+    <string name="customers">گاہک</string>
+    <string name="cash_book">کیش بک</string>
+    <string name="settings">سیٹنگز</string>
+    <string name="theme">تھیم</string>
+    <string name="theme_light">لائٹ</string>
+    <string name="theme_dark">ڈارک</string>
+    <string name="theme_system">سسٹم</string>
+    <string name="language">زبان</string>
+    <string name="you_will_get">آپ کو ملنا ہے</string>
+    <string name="you_will_give">آپ کو دینا ہے</string>
+</resources>

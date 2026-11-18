@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">আপনার ডিজিটাল খাতা</string>
+    <string name="home">হোম</string>
+    <string name="customers">গ্রাহক</string>
+    <string name="cash_book">ক্যাশ বুক</string>
+    <string name="settings">সেটিংস</string>
+    <string name="theme">থিম</string>
+    <string name="theme_light">লাইট</string>
+    <string name="theme_dark">ডার্ক</string>
+    <string name="theme_system">সিস্টেম</string>
+    <string name="language">ভাষা</string>
+    <string name="you_will_get">আপনি পাবেন</string>
+    <string name="you_will_give">আপনি দেবেন</string>
+</resources>

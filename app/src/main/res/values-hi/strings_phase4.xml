@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_restore">बैकअप और रिस्टोर</string>
+    <string name="backup_note">बैकअप में आपके ग्राहक, सप्लायर, लेन-देन और व्यवसाय का विवरण होता है। लोगो की तस्वीर इसमें शामिल नहीं होती। बैकअप फ़ाइल सुरक्षित रखें।</string>
+    <string name="backup_create">बैकअप बनाएं</string>
+    <string name="backup_restore_action">रिस्टोर</string>
+    <string name="backup_saved">बैकअप सहेजा गया</string>
+    <string name="backup_failed">बैकअप नहीं बन सका</string>
+    <string name="restore_invalid">यह सही Hisab Baki बैकअप फ़ाइल नहीं है</string>
+    <string name="restore_corrupt">बैकअप फ़ाइल खराब है</string>
+    <string name="restore_newer">यह बैकअप ऐप के नए वर्जन से बना है</string>
+    <string name="restore_confirm_title">बैकअप रिस्टोर करें?</string>
+    <string name="restore_confirm_msg">इस बैकअप में %1$d ग्राहक, %2$d सप्लायर और %3$d लेन-देन हैं।\n\nवर्तमान सारा डेटा बदल जाएगा। आपके वर्तमान डेटा की एक सुरक्षा कॉपी ऐप के अंदर रखी जाएगी।\n\nजारी रखें?</string>
+    <string name="restore_confirm_btn">रिस्टोर</string>
+    <string name="restore_done">बैकअप रिस्टोर हो गया</string>
+    <string name="restore_failed">बैकअप रिस्टोर नहीं हो सका</string>
+    <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="privacy_text">Hisab Baki Pro आपका सारा डेटा (ग्राहक, सप्लायर, लेन-देन और व्यवसाय का विवरण) केवल आपके फ़ोन में सहेजता है। ऐप ऑफ़लाइन चलता है और इसके लिए किसी अकाउंट की ज़रूरत नहीं है।\n\nहम आपका डेटा इकट्ठा, अपलोड या बेचते नहीं हैं। कोई एनालिटिक्स या विज्ञापन टूल इस्तेमाल नहीं होता।\n\nऐप आपके बटन दबाने पर ही फ़ोन का डायलर, WhatsApp, SMS या शेयर ऐप खोलता है, और केवल वही सामग्री (जैसे रिमाइंडर संदेश या PDF) उन्हें दी जाती है जो आप चुनते हैं। कुछ भी भेजने से पहले आप हमेशा पुष्टि करते हैं।\n\nबैकअप और एक्सपोर्ट फ़ाइलें आपकी चुनी हुई जगह पर सहेजी जाती हैं। इनमें आपके व्यवसाय का हिसाब होता है, इसलिए इन्हें सुरक्षित रखें।\n\nबैकअप के बिना ऐप अनइंस्टॉल करने या उसका डेटा मिटाने पर आपका हिसाब वापस नहीं मिल सकता। सेटिंग्स > बैकअप और रिस्टोर में नियमित बैकअप बनाएं।</string>
+    <string name="about_offline">पूरी तरह ऑफ़लाइन चलता है। आपका डेटा इसी फ़ोन में रहता है।</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">మీ డిజిటల్ ఖాతా</string>
+    <string name="home">హోమ్</string>
+    <string name="customers">కస్టమర్లు</string>
+    <string name="cash_book">క్యాష్ బుక్</string>
+    <string name="settings">సెట్టింగ్‌లు</string>
+    <string name="theme">థీమ్</string>
+    <string name="theme_light">లైట్</string>
+    <string name="theme_dark">డార్క్</string>
+    <string name="theme_system">సిస్టమ్</string>
+    <string name="language">భాష</string>
+    <string name="you_will_get">మీకు రావాలి</string>
+    <string name="you_will_give">మీరు ఇవ్వాలి</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಖಾತೆ ಪುಸ್ತಕ</string>
+    <string name="home">ಮುಖಪುಟ</string>
+    <string name="customers">ಗ್ರಾಹಕರು</string>
+    <string name="cash_book">ಕ್ಯಾಶ್ ಬುಕ್</string>
+    <string name="settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="theme">ಥೀಮ್</string>
+    <string name="theme_light">ಲೈಟ್</string>
+    <string name="theme_dark">ಡಾರ್ಕ್</string>
+    <string name="theme_system">ಸಿಸ್ಟಮ್</string>
+    <string name="language">ಭಾಷೆ</string>
+    <string name="you_will_get">ನಿಮಗೆ ಬರಬೇಕು</string>
+    <string name="you_will_give">ನೀವು ಕೊಡಬೇಕು</string>
+</resources>
