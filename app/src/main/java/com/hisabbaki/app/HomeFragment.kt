@@ -12,10 +12,14 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.hisabbaki.app.data.BillingRepo
 import com.hisabbaki.app.data.DashboardStats
 import com.hisabbaki.app.data.Db
+import com.hisabbaki.app.data.InventoryRepo
+import com.hisabbaki.app.data.ProductStats
 import com.hisabbaki.app.data.Repository
 import com.hisabbaki.app.data.TxTypes
+import com.hisabbaki.app.util.Dates
 import com.hisabbaki.app.util.Money
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,6 +33,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         view.findViewById<View>(R.id.btnAddCustomer).setOnClickListener { openPartyEditor(false) }
         view.findViewById<View>(R.id.btnAddSupplier).setOnClickListener { openPartyEditor(true) }
         view.findViewById<View>(R.id.btnAddTransaction).setOnClickListener { addTransaction() }
+
+        view.findViewById<View>(R.id.btnQuickProducts).setOnClickListener {
+            startActivity(Intent(requireContext(), ProductsActivity::class.java))
+        }
+        view.findViewById<View>(R.id.btnQuickBilling).setOnClickListener {
+            startActivity(Intent(requireContext(), InvoicesActivity::class.java))
+        }
+        view.findViewById<View>(R.id.btnQuickCashbook).setOnClickListener {
+            startActivity(Intent(requireContext(), CashbookActivity::class.java))
+        }
+
+        view.findViewById<com.google.android.material.chip.ChipGroup>(R.id.chipGroupHomePeriod)
+            .setOnCheckedStateChangeListener { _, _ -> loadOverview() }
 
         val etSearch = view.findViewById<EditText>(R.id.etSearch)
         etSearch.setOnEditorActionListener { v, actionId, _ ->
@@ -44,6 +61,59 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onResume() {
         super.onResume()
         load()
+        loadOverview()
+    }
+
+    private fun bizId() = Prefs.currentBusinessId(requireContext())
+
+    private fun overviewRange(): com.hisabbaki.app.util.Range =
+        when (view?.findViewById<com.google.android.material.chip.ChipGroup>(R.id.chipGroupHomePeriod)?.checkedChipId) {
+            R.id.chipHToday -> Dates.today()
+            R.id.chipHWeek -> Dates.thisWeek()
+            R.id.chipHYear -> Dates.thisYear()
+            else -> Dates.thisMonth()
+        }
+
+    private var overviewRequestId = 0
+
+    private fun loadOverview() {
+        val root = view ?: return
+        val range = overviewRange()
+        val appCtx = requireContext().applicationContext
+        overviewRequestId += 1
+        val myId = overviewRequestId
+        val businessId = bizId()
+
+        Db.async({
+            val totals = BillingRepo.get(appCtx).getBusinessTotals(businessId, range.from, range.to)
+            val stock = InventoryRepo.get(appCtx).getProductStats(businessId)
+            Pair(totals, stock)
+        }) { result ->
+            val v = view
+            if (!isAdded || v == null || myId != overviewRequestId) return@async
+            result.onSuccess { pair ->
+                val t = pair.first
+                val s = pair.second
+                v.findViewById<TextView>(R.id.tvSales).text = Money.format(t.salesPaise)
+                v.findViewById<TextView>(R.id.tvPurchases).text = Money.format(t.purchasesPaise)
+                v.findViewById<TextView>(R.id.tvExpenses).text = Money.format(t.expensesPaise)
+                val profit = v.findViewById<TextView>(R.id.tvProfit)
+                profit.text = Money.format(t.netProfitPaise)
+                profit.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (t.netProfitPaise >= 0) R.color.get_green else R.color.give_red
+                    )
+                )
+                v.findViewById<TextView>(R.id.tvStockLine).text = getString(
+                    R.string.dash_stock_line,
+                    s.productCount, s.lowStockCount, Money.format(s.stockValuePaise)
+                )
+            }
+            result.onFailure {
+                Toast.makeText(appCtx, R.string.error_load, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun openPartyEditor(isSupplier: Boolean) {

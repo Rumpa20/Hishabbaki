@@ -66,7 +66,16 @@ class ReportsFragment : Fragment(R.layout.fragment_reports) {
             Pair(R.id.rowCredit, ReportBuilder.CREDIT),
             Pair(R.id.rowDebit, ReportBuilder.DEBIT),
             Pair(R.id.rowCollection, ReportBuilder.COLLECTION),
-            Pair(R.id.rowOutstanding, ReportBuilder.OUTSTANDING)
+            Pair(R.id.rowOutstanding, ReportBuilder.OUTSTANDING),
+            Pair(R.id.rowSales, ReportBuilder.SALES),
+            Pair(R.id.rowPurchases, ReportBuilder.PURCHASES),
+            Pair(R.id.rowExpenses, ReportBuilder.EXPENSES),
+            Pair(R.id.rowPnl, ReportBuilder.PNL),
+            Pair(R.id.rowCashbook, ReportBuilder.CASHBOOK),
+            Pair(R.id.rowInventory, ReportBuilder.INVENTORY),
+            Pair(R.id.rowLowStock, ReportBuilder.LOW_STOCK),
+            Pair(R.id.rowProductSales, ReportBuilder.PRODUCT_SALES),
+            Pair(R.id.rowDaily, ReportBuilder.DAILY)
         )
         for (r in rows) {
             view.findViewById<View>(r.first).setOnClickListener { openReport(r.second) }
