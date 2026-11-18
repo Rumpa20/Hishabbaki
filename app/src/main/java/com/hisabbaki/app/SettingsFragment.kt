@@ -99,6 +99,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         view.findViewById<View>(R.id.rowCashbook).setOnClickListener {
             startActivity(Intent(requireContext(), CashbookActivity::class.java))
         }
+        view.findViewById<View>(R.id.rowAi).setOnClickListener {
+            startActivity(Intent(requireContext(), AiAssistantActivity::class.java))
+        }
         view.findViewById<View>(R.id.rowExport).setOnClickListener { showExportDialog() }
         view.findViewById<View>(R.id.rowBackup).setOnClickListener { showBackupDialog() }
         view.findViewById<View>(R.id.rowLock).setOnClickListener { showAppLockDialog() }

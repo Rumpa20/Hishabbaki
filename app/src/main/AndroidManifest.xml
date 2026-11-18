@@ -111,6 +111,11 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".AiAssistantActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".CashbookActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
