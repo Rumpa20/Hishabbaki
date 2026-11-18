@@ -161,4 +161,24 @@ object BackupManager {
             info.file.delete()
         }
     }
+
+    /** Keeps the last 7 daily copies in the app's private storage. */
+    fun autoBackup(ctx: Context): File {
+        val db = DatabaseHelper.get(ctx).writableDatabase
+        checkpoint(db)
+        val dir = File(ctx.getExternalFilesDir(null) ?: ctx.filesDir, "backups")
+        dir.mkdirs()
+        val name = "HisabBakiPro_auto_" +
+            java.text.SimpleDateFormat("yyyyMMdd_HHmm", java.util.Locale.US)
+                .format(java.util.Date()) + ".db"
+        val out = File(dir, name)
+        FileInputStream(DatabaseHelper.dbFile(ctx)).use { i ->
+            FileOutputStream(out).use { o -> i.copyTo(o) }
+        }
+        val files = dir.listFiles()?.sortedBy { it.name } ?: emptyList()
+        if (files.size > 7) {
+            for (f in files.take(files.size - 7)) f.delete()
+        }
+        return out
+    }
 }

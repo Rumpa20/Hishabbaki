@@ -13,6 +13,8 @@ object Prefs {
     private const val KEY_LOCK_ENABLED = "lock_enabled"
     private const val KEY_PIN_HASH = "pin_hash"
     private const val KEY_PIN_SALT = "pin_salt"
+    private const val KEY_PIN_LEN = "pin_len"
+    private const val KEY_BIO_UNLOCK = "bio_unlock"
     private const val KEY_LAST_ACTIVE = "last_active_ms"
     private const val KEY_ALLOW_NEGATIVE = "allow_negative_stock"
     private const val KEY_AUTO_BACKUP = "auto_backup_enabled"
@@ -55,12 +57,13 @@ object Prefs {
      * Returns true when a hash is now set.
      */
     fun setPin(ctx: Context, pin: String): Boolean {
-        if (pin.length < 4) return false
+        if (pin.length < 4 || pin.length > 8) return false
         val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
         val hash = pbkdf2(pin, salt)
         pref(ctx).edit()
             .putString(KEY_PIN_SALT, salt.toHex())
             .putString(KEY_PIN_HASH, hash.toHex())
+            .putInt(KEY_PIN_LEN, pin.length)
             .putBoolean(KEY_LOCK_ENABLED, true)
             .apply()
         return true
@@ -77,8 +80,18 @@ object Prefs {
         pref(ctx).edit()
             .remove(KEY_PIN_HASH)
             .remove(KEY_PIN_SALT)
+            .remove(KEY_PIN_LEN)
             .putBoolean(KEY_LOCK_ENABLED, false)
+            .putBoolean(KEY_BIO_UNLOCK, false)
             .apply()
+    }
+
+    fun pinLength(ctx: Context): Int = pref(ctx).getInt(KEY_PIN_LEN, 4)
+
+    fun isBioUnlock(ctx: Context): Boolean = pref(ctx).getBoolean(KEY_BIO_UNLOCK, false)
+
+    fun setBioUnlock(ctx: Context, enabled: Boolean) {
+        pref(ctx).edit().putBoolean(KEY_BIO_UNLOCK, enabled).apply()
     }
 
     fun hasPin(ctx: Context): Boolean = pref(ctx).getString(KEY_PIN_HASH, null) != null

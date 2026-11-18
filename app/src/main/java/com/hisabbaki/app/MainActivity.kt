@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.hisabbaki.app.data.Db
+import com.hisabbaki.app.util.BackupManager
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        maybeAutoBackup()
 
         bottomNav = findViewById(R.id.bottomNav)
         fab = findViewById(R.id.fabAdd)
@@ -49,6 +52,28 @@ class MainActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         currentTab = bottomNav.selectedItemId
         updateFab(currentTab)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (LockActivity.shouldLock(this)) {
+            startActivity(
+                Intent(this, LockActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        }
+    }
+
+    private fun maybeAutoBackup() {
+        if (!Prefs.isAutoBackupEnabled(this)) return
+        val appCtx = applicationContext
+        val now = System.currentTimeMillis()
+        if (now - Prefs.lastAutoBackupMs(appCtx) < 24L * 60L * 60L * 1000L) return
+        Db.async({ BackupManager.autoBackup(appCtx) }) { result ->
+            result.onSuccess {
+                Prefs.setLastAutoBackupMs(appCtx, System.currentTimeMillis())
+            }
+        }
     }
 
     /** Called by the Home search box: opens the Customers tab with the search text filled in. */

@@ -95,11 +95,92 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         }
         view.findViewById<View>(R.id.rowExport).setOnClickListener { showExportDialog() }
         view.findViewById<View>(R.id.rowBackup).setOnClickListener { showBackupDialog() }
+        view.findViewById<View>(R.id.rowLock).setOnClickListener { showAppLockDialog() }
+
+        val switchAuto = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(
+            R.id.switchAutoBackup
+        )
+        switchAuto.isChecked = Prefs.isAutoBackupEnabled(requireContext())
+        switchAuto.setOnCheckedChangeListener { _, checked ->
+            Prefs.setAutoBackupEnabled(requireContext(), checked)
+        }
         view.findViewById<View>(R.id.rowPrivacy).setOnClickListener {
             startActivity(Intent(requireContext(), PrivacyPolicyActivity::class.java))
         }
 
         view.findViewById<TextView>(R.id.tvVersion).text = versionName()
+    }
+
+    // ------------------------------------------------------------ App lock
+
+    private fun biometricsAvailable(): Boolean =
+        androidx.biometric.BiometricManager.from(requireContext())
+            .canAuthenticate(androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK) ==
+            androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
+
+    private fun showAppLockDialog() {
+        val hasPin = Prefs.hasPin(requireContext())
+        val view = layoutInflater.inflate(R.layout.dialog_app_lock, null)
+        val tilCurrent = view.findViewById<com.google.android.material.textfield.TextInputLayout>(
+            R.id.tilCurrent
+        )
+        val etCurrent = view.findViewById<TextView>(R.id.etCurrent)
+        val etNew = view.findViewById<TextView>(R.id.etNew)
+        val etConfirm = view.findViewById<TextView>(R.id.etConfirm)
+        val switchBio = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(
+            R.id.switchBio
+        )
+
+        tilCurrent.visibility = if (hasPin) android.view.View.VISIBLE else android.view.View.GONE
+        switchBio.visibility = if (biometricsAvailable()) android.view.View.VISIBLE else android.view.View.GONE
+        switchBio.isChecked = Prefs.isBioUnlock(requireContext())
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.app_lock)
+            .setView(view)
+            .setPositiveButton(R.string.save, null)
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+
+        if (hasPin) {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).text =
+                getString(R.string.pin_disable)
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                val current = etCurrent.text.toString()
+                if (!Prefs.checkPin(requireContext(), current)) {
+                    tilCurrent.error = getString(R.string.current_pin_wrong)
+                    return@setOnClickListener
+                }
+                Prefs.clearPin(requireContext())
+                Toast.makeText(requireContext(), R.string.pin_disabled, Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            tilCurrent.error = null
+            val current = etCurrent.text.toString()
+            val newPin = etNew.text.toString()
+            if (hasPin && !Prefs.checkPin(requireContext(), current)) {
+                tilCurrent.error = getString(R.string.current_pin_wrong)
+                return@setOnClickListener
+            }
+            if (newPin.length < 4 || newPin.length > 8) {
+                Toast.makeText(requireContext(), R.string.pin_invalid, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (newPin != etConfirm.text.toString()) {
+                Toast.makeText(requireContext(), R.string.pin_mismatch, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (!Prefs.setPin(requireContext(), newPin)) {
+                Toast.makeText(requireContext(), R.string.pin_invalid, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            Prefs.setBioUnlock(requireContext(), switchBio.isChecked)
+            Toast.makeText(requireContext(), R.string.pin_saved, Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
     }
 
     // ------------------------------------------------------------ CSV export

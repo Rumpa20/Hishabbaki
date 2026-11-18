@@ -216,4 +216,19 @@
     <string name="upi_not_set">Set your business UPI ID first (Business profile).</string>
     <string name="upi_qr_note">The customer pays in their UPI app. Hishabbaki records the payment only after you add it yourself.</string>
     <string name="upi_collect">Collect via UPI QR</string>
+    <string name="app_lock">App lock</string>
+    <string name="lock_subtitle">Enter your PIN to unlock</string>
+    <string name="pin_current">Current PIN</string>
+    <string name="pin_new">New PIN (4-8 digits)</string>
+    <string name="pin_confirm">Confirm new PIN</string>
+    <string name="pin_mismatch">PINs do not match</string>
+    <string name="pin_invalid">PIN must be 4-8 digits</string>
+    <string name="pin_saved">App lock enabled</string>
+    <string name="pin_disabled">App lock disabled</string>
+    <string name="pin_disable">Disable</string>
+    <string name="bio_unlock">Unlock with fingerprint</string>
+    <string name="lock_wrong_pin">Wrong PIN, try again</string>
+    <string name="current_pin_wrong">Current PIN is wrong</string>
+    <string name="backspace">⌫</string>
+    <string name="auto_backup_label">Automatic daily backup</string>
 </resources>

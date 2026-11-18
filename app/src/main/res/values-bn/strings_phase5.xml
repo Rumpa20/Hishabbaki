@@ -216,4 +216,19 @@
     <string name="upi_not_set">প্রথমে ব্যবসার ইউপিআই আইডি সেট করুন (ব্যবসা প্রোফাইল)।</string>
     <string name="upi_qr_note">গ্রাহক নিজের ইউপিআই অ্যাপে পেমেন্ট করবেন। আপনি নিজে যোগ করার আগে Hishabbaki পেমেন্ট রেকর্ড করবে না।</string>
     <string name="upi_collect">ইউপিআই কিউআর দিয়ে উসুলি</string>
+    <string name="app_lock">অ্যাপ লক</string>
+    <string name="lock_subtitle">আনলক করতে পিন দিন</string>
+    <string name="pin_current">বর্তমান পিন</string>
+    <string name="pin_new">নতুন পিন (৪-৮ অঙ্ক)</string>
+    <string name="pin_confirm">নতুন পিন নিশ্চিত করুন</string>
+    <string name="pin_mismatch">পিন মিলছে না</string>
+    <string name="pin_invalid">পিন ৪-৮ অঙ্কের হতে হবে</string>
+    <string name="pin_saved">অ্যাপ লক চালু</string>
+    <string name="pin_disabled">অ্যাপ লক বন্ধ</string>
+    <string name="pin_disable">বন্ধ করুন</string>
+    <string name="bio_unlock">আঙুলের ছাপ দিয়ে আনলক</string>
+    <string name="lock_wrong_pin">ভুল পিন, আবার চেষ্টা করুন</string>
+    <string name="current_pin_wrong">বর্তমান পিন ভুল</string>
+    <string name="backspace">⌫</string>
+    <string name="auto_backup_label">প্রতিদিন স্বয়ংক্রিয় ব্যাকআপ</string>
 </resources>

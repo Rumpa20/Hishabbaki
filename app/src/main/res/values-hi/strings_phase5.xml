@@ -216,4 +216,19 @@
     <string name="upi_not_set">पहले व्यापार की यूपीआई आईडी सेट करें (व्यापार प्रोफ़ाइल)।</string>
     <string name="upi_qr_note">ग्राहक अपने यूपीआई ऐप से भुगतान करेगा। आपके द्वारा स्वयं जोड़ने से पहले Hishabbaki भुगतान दर्ज नहीं करेगा।</string>
     <string name="upi_collect">यूपीआई क्यूआर से वसूली</string>
+    <string name="app_lock">ऐप लॉक</string>
+    <string name="lock_subtitle">अनलॉक करने के लिए पिन दर्ज करें</string>
+    <string name="pin_current">वर्तमान पिन</string>
+    <string name="pin_new">नया पिन (4-8 अंक)</string>
+    <string name="pin_confirm">नया पिन पुष्टि करें</string>
+    <string name="pin_mismatch">पिन मेल नहीं खाते</string>
+    <string name="pin_invalid">पिन 4-8 अंकों का हो</string>
+    <string name="pin_saved">ऐप लॉक चालू</string>
+    <string name="pin_disabled">ऐप लॉक बंद</string>
+    <string name="pin_disable">बंद करें</string>
+    <string name="bio_unlock">फिंगरप्रिंट से अनलॉक</string>
+    <string name="lock_wrong_pin">गलत पिन, फिर कोशिश करें</string>
+    <string name="current_pin_wrong">वर्तमान पिन गलत</string>
+    <string name="backspace">⌫</string>
+    <string name="auto_backup_label">स्वचालित दैनिक बैकअप</string>
 </resources>
