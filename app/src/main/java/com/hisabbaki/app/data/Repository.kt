@@ -6,6 +6,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.hisabbaki.app.Prefs
 import java.util.Calendar
+import org.json.JSONArray
+import org.json.JSONObject
 
 /** All methods are blocking. Call them only through Db.async (background thread). */
 class Repository private constructor(
@@ -149,12 +151,51 @@ class Repository private constructor(
             arrayOf(id.toString())
         ).toInt()
 
-    /** Deletes a party; their transactions are removed by the foreign-key cascade. */
+    /** Deletes a party after keeping a recoverable copy in the recycle bin. */
     fun deleteParty(isSupplier: Boolean, id: Long) {
-        helper.writableDatabase.delete(
-            table(isSupplier), "id = ? AND business_id = ?",
-            arrayOf(id.toString(), biz().toString())
-        )
+        val db = helper.writableDatabase
+        val party = getParty(isSupplier, id) ?: return
+        val txs = ArrayList<Tx>()
+        helper.readableDatabase.rawQuery(
+            "SELECT " + TX_COLUMNS + " FROM transactions WHERE " + fkColumn(isSupplier) + " = ?",
+            arrayOf(id.toString())
+        ).use { c -> while (c.moveToNext()) txs.add(readTx(c)) }
+
+        db.beginTransaction()
+        try {
+            CoreRepo.get(appContext).saveToBin(
+                biz(), if (isSupplier) "supplier" else "customer", party.name,
+                binPartyPayload(party, txs)
+            )
+            db.delete(table(isSupplier), "id = ?", arrayOf(id.toString()))
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    private fun binPartyPayload(party: Party, txs: List<Tx>): String {
+        val txArray = JSONArray()
+        for (t in txs) {
+            txArray.put(
+                JSONObject()
+                    .put("t", t.txType)
+                    .put("a", t.amountPaise)
+                    .put("tm", t.txTime)
+                    .put("d", t.description)
+                    .put("r", t.referenceNo)
+                    .put("m", t.paymentMethod)
+                    .put("n", t.notes)
+            )
+        }
+        return JSONObject()
+            .put("name", party.name)
+            .put("mobile", party.mobile)
+            .put("address", party.address)
+            .put("opening", party.openingPaise)
+            .put("notes", party.notes)
+            .put("transactions", txArray)
+            .toString()
     }
 
     // ------------------------------------------------------------ transactions
@@ -247,7 +288,23 @@ class Repository private constructor(
         db.rawQuery("SELECT id FROM transactions WHERE client_uuid = ?", arrayOf(uuid))
             .use { c -> if (c.moveToFirst()) c.getLong(0) else null }
 
+    /** Deletes a transaction after keeping a recoverable copy in the recycle bin. */
     fun deleteTransaction(id: Long) {
+        val tx = getTransaction(id) ?: return
+        CoreRepo.get(appContext).saveToBin(
+            biz(), "transaction", tx.description.ifBlank { tx.referenceNo },
+            JSONObject()
+                .put("s", if (tx.isSupplier) 1 else 0)
+                .put("p", tx.partyId)
+                .put("t", tx.txType)
+                .put("a", tx.amountPaise)
+                .put("tm", tx.txTime)
+                .put("d", tx.description)
+                .put("r", tx.referenceNo)
+                .put("m", tx.paymentMethod)
+                .put("n", tx.notes)
+                .toString()
+        )
         helper.writableDatabase.delete(
             "transactions", "id = ? AND business_id = ?",
             arrayOf(id.toString(), biz().toString())

@@ -294,4 +294,18 @@
 <string name="ai_stock_value">স্টকের মূল্য</string>
 <string name="ai_top_customers_title">যাদের পেমেন্ট বাকি</string>
 <string name="ai_none">নেই</string>
+<string name="recycle_bin">রিসাইকেল বিন</string>
+<string name="bin_hint">মুছে ফেলা কাস্টমার, সাপ্লায়ার, লেনদেন, খরচ, পণ্য ও কর্মীর বিবরণ এখানে সংরক্ষিত থাকে, যাতে রেকর্ড দেখে আবার ফেরানো যায়।</string>
+<string name="bin_empty">রিসাইকেল বিন খালি</string>
+<string name="bin_restore">ফেরান</string>
+<string name="bin_deleted_at">মুছেছে</string>
+<string name="bin_type">ধরন</string>
+<string name="bin_restore_done">ফেরানো হয়েছে</string>
+<string name="bin_party_missing">ফেরানো যায়নি: মূল কাস্টমার বা সাপ্লায়ার আর নেই। আগে কাস্টমার/সাপ্লায়ার ফেরান বা নতুন করে তৈরি করুন।</string>
+<string name="bin_restore_failed">ফেরানো ব্যর্থ হয়েছে</string>
+<string name="bin_purge">স্থায়ীভাবে মুছুন</string>
+<string name="bin_purge_confirm">রিসাইকেল বিন থেকে \"%1$s\" স্থায়ীভাবে মুছবেন? এটি আর ফেরানো যাবে না।</string>
+<string name="customer_who">কাস্টমার</string>
+<string name="supplier_who">সাপ্লায়ার</string>
+<string name="transactions_label">লেনদেন</string>
 </resources>

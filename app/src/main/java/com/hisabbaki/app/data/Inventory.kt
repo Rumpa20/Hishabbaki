@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.hisabbaki.app.Prefs
 import com.hisabbaki.app.util.Qty
+import org.json.JSONObject
 
 data class ProductCategory(val id: Long, val name: String)
 
@@ -295,6 +296,26 @@ class InventoryRepo private constructor(
     }
 
     fun deleteProduct(businessId: Int, id: Long) {
+        val product = getProduct(businessId, id)
+        if (product != null) {
+            CoreRepo.get(appContext).saveToBin(
+                businessId, "product", product.name,
+                JSONObject()
+                    .put("name", product.name)
+                    .put("sku", product.sku)
+                    .put("barcode", product.barcode)
+                    .put("unit", product.unit)
+                    .put("image", product.imagePath)
+                    .put("buy", product.purchasePricePaise)
+                    .put("sell", product.sellingPricePaise)
+                    .put("mrp", product.mrpPaise)
+                    .put("stock", product.stockMilli)
+                    .put("min", product.minStockMilli)
+                    .put("negative", product.allowNegative)
+                    .put("notes", product.notes)
+                    .toString()
+            )
+        }
         helper.writableDatabase.delete("products", "id = ? AND business_id = ?",
             arrayOf(id.toString(), businessId.toString()))
     }

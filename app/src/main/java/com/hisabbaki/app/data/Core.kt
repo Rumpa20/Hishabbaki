@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import com.hisabbaki.app.util.Dates
 import java.util.Calendar
+import org.json.JSONArray
+import org.json.JSONObject
 
 data class Business(
     val id: Int,
@@ -308,6 +310,159 @@ class CoreRepo private constructor(
         helper.writableDatabase.delete("deleted_records", "id = ?", arrayOf(id.toString()))
     }
 
+    /** Restores a bin record as a new record in the business. Returns "" on success. */
+    fun restoreBinItem(businessId: Int, id: Long): String {
+        val item = getBinItem(businessId, id) ?: return "Record not found"
+        return try {
+            when (item.entity) {
+                "customer", "supplier" -> restoreParty(businessId, item.entity, item.payload)
+                "expense" -> restoreExpense(businessId, item.payload)
+                "staff" -> restoreStaff(businessId, item.payload)
+                "product" -> restoreProduct(businessId, item.payload)
+                "transaction" -> restoreTransaction(businessId, item.payload)
+            }
+            removeBinItem(id)
+            ""
+        } catch (e: IllegalStateException) {
+            e.message ?: "Restore failed"
+        } catch (e: Exception) {
+            "Restore failed"
+        }
+    }
+
+    private fun restoreParty(businessId: Int, entity: String, payload: String) {
+        val root = JSONObject(payload)
+        val db = helper.writableDatabase
+        val now = System.currentTimeMillis()
+        val cv = ContentValues()
+        cv.put("business_id", businessId)
+        cv.put("name", root.optString("name"))
+        cv.put("mobile", root.optString("mobile"))
+        cv.put("address", root.optString("address"))
+        cv.put("opening_balance_paise", root.optLong("opening"))
+        cv.put("notes", root.optString("notes"))
+        cv.put("created_at", now)
+        cv.put("updated_at", now)
+        db.beginTransaction()
+        try {
+            val partyId = db.insertOrThrow(
+                if (entity == "supplier") "suppliers" else "customers", null, cv
+            )
+            val txArray = root.optJSONArray("transactions") ?: JSONArray()
+            for (i in 0 until txArray.length()) {
+                val t = txArray.getJSONObject(i)
+                val tcv = ContentValues()
+                tcv.put("business_id", businessId)
+                if (entity == "supplier") {
+                    tcv.put("supplier_id", partyId)
+                    tcv.putNull("customer_id")
+                } else {
+                    tcv.put("customer_id", partyId)
+                    tcv.putNull("supplier_id")
+                }
+                tcv.put("tx_type", t.optString("t"))
+                tcv.put("amount_paise", t.optLong("a"))
+                tcv.put("tx_time", t.optLong("tm"))
+                tcv.put("description", t.optString("d"))
+                tcv.put("reference_no", t.optString("r"))
+                tcv.put("payment_method", t.optString("m", "CASH"))
+                tcv.put("notes", t.optString("n"))
+                tcv.put("client_uuid", java.util.UUID.randomUUID().toString())
+                tcv.put("created_at", now)
+                tcv.put("updated_at", now)
+                db.insertOrThrow("transactions", null, tcv)
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+        log(businessId, "RESTORE", entity, -1L, root.optString("name"))
+    }
+
+    private fun restoreExpense(businessId: Int, payload: String) {
+        val root = JSONObject(payload)
+        val expenseRepo = ExpenseRepo.get(appContext)
+        val catName = root.optString("category")
+        val catId = if (catName.isBlank()) {
+            0L
+        } else {
+            expenseRepo.getCategories(businessId)
+                .firstOrNull { it.name.equals(catName, ignoreCase = true) }?.id
+                ?: expenseRepo.saveCategory(businessId, 0L, catName)
+        }
+        val amount = root.optLong("amount")
+        expenseRepo.saveExpense(
+            businessId, 0L, catId, root.optString("title"),
+            if (amount > 0) amount else 1L,
+            root.optLong("date"), root.optString("method", "CASH"),
+            root.optString("notes"), root.optString("attachment"),
+            root.optString("recurrence", ExpenseRepo.REC_NONE)
+        )
+    }
+
+    private fun restoreStaff(businessId: Int, payload: String) {
+        val root = JSONObject(payload)
+        saveStaff(
+            businessId, 0L, root.optString("name"), root.optString("mobile"),
+            root.optString("role", StaffRoles.EMPLOYEE), root.optLong("salary"),
+            root.optLong("joined"), root.optBoolean("active", true), root.optString("notes")
+        )
+    }
+
+    private fun restoreProduct(businessId: Int, payload: String) {
+        val root = JSONObject(payload)
+        val inventory = InventoryRepo.get(appContext)
+        val sku = root.optString("sku")
+        val attempt = { skuValue: String ->
+            inventory.saveProduct(
+                businessId, 0L, 0L, root.optString("name"), skuValue, root.optString("barcode"),
+                root.optString("unit", "pcs"), root.optString("image"), root.optLong("buy"),
+                root.optLong("sell"), root.optLong("mrp"), root.optLong("stock"),
+                root.optLong("min"), root.optBoolean("negative"), root.optString("notes")
+            )
+        }
+        try {
+            attempt(sku)
+        } catch (e: DuplicateSkuException) {
+            attempt("$sku-R")
+        }
+    }
+
+    private fun restoreTransaction(businessId: Int, payload: String) {
+        val root = JSONObject(payload)
+        val isSupplier = root.optInt("s") == 1
+        val partyId = root.optLong("p")
+        val table = if (isSupplier) "suppliers" else "customers"
+        val exists = helper.readableDatabase.rawQuery(
+            "SELECT 1 FROM $table WHERE id = ? AND business_id = ?",
+            arrayOf(partyId.toString(), businessId.toString())
+        ).use { it.moveToFirst() }
+        if (!exists) throw IllegalStateException("PARTY_MISSING")
+        val db = helper.writableDatabase
+        val now = System.currentTimeMillis()
+        val cv = ContentValues()
+        cv.put("business_id", businessId)
+        if (isSupplier) {
+            cv.put("supplier_id", partyId)
+            cv.putNull("customer_id")
+        } else {
+            cv.put("customer_id", partyId)
+            cv.putNull("supplier_id")
+        }
+        cv.put("tx_type", root.optString("t"))
+        cv.put("amount_paise", root.optLong("a"))
+        cv.put("tx_time", root.optLong("tm"))
+        cv.put("description", root.optString("d"))
+        cv.put("reference_no", root.optString("r"))
+        cv.put("payment_method", root.optString("m", "CASH"))
+        cv.put("notes", root.optString("n"))
+        cv.put("client_uuid", java.util.UUID.randomUUID().toString())
+        cv.put("created_at", now)
+        cv.put("updated_at", now)
+        val newId = db.insertOrThrow("transactions", null, cv)
+        log(businessId, "RESTORE", "transaction", newId, "")
+    }
+
     // ------------------------------------------------------------ staff
 
     fun getStaff(businessId: Int, activeOnly: Boolean = false): List<Staff> {
@@ -373,10 +528,27 @@ class CoreRepo private constructor(
     }
 
     fun deleteStaff(businessId: Int, id: Long) {
+        getStaffById(businessId, id)?.let { staff ->
+            saveToBin(
+                businessId, "staff", staff.name,
+                JSONObject()
+                    .put("name", staff.name)
+                    .put("mobile", staff.mobile)
+                    .put("role", staff.role)
+                    .put("salary", staff.monthlySalaryPaise)
+                    .put("joined", staff.joinedAt)
+                    .put("active", staff.isActive)
+                    .put("notes", staff.notes)
+                    .toString()
+            )
+        }
         helper.writableDatabase.delete("staff", "id = ? AND business_id = ?",
             arrayOf(id.toString(), businessId.toString()))
         log(businessId, "DELETE", "staff", id, "")
     }
+
+    private fun getStaffById(businessId: Int, id: Long): Staff? =
+        getStaff(businessId).firstOrNull { it.id == id }
 
     fun getAttendance(staffId: Long, from: Long, to: Long): List<AttendanceDay> {
         val out = ArrayList<AttendanceDay>()

@@ -116,6 +116,10 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".RecycleBinActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".CashbookActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

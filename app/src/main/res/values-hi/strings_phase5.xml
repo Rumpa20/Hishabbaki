@@ -294,4 +294,18 @@
 <string name="ai_stock_value">स्टॉक मूल्य</string>
 <string name="ai_top_customers_title">जिन ग्राहकों का भुगतान बाकी है</string>
 <string name="ai_none">कोई नहीं</string>
+<string name="recycle_bin">रीसायकल बिन</string>
+<string name="bin_hint">हटाए गए ग्राहक, सप्लायर, लेन-देन, खर्च, उत्पाद और कर्मचारी का विवरण यहाँ रखा जाता है, ताकि रिकॉर्ड देखकर वापस लाया जा सके।</string>
+<string name="bin_empty">रीसायकल बिन खाली है</string>
+<string name="bin_restore">वापस लाएँ</string>
+<string name="bin_deleted_at">हटाया गया</string>
+<string name="bin_type">प्रकार</string>
+<string name="bin_restore_done">वापस लाया गया</string>
+<string name="bin_party_missing">वापस नहीं ला सकते: मूल ग्राहक या सप्लायर अब मौजूद नहीं है। पहले ग्राहक/सप्लायर वापस लाएँ या दोबारा बनाएँ।</string>
+<string name="bin_restore_failed">वापस लाना विफल रहा</string>
+<string name="bin_purge">स्थायी रूप से हटाएँ</string>
+<string name="bin_purge_confirm">रीसायकल बिन से \"%1$s\" स्थायी रूप से हटाएँ? इसे वापस नहीं किया जा सकता।</string>
+<string name="customer_who">ग्राहक</string>
+<string name="supplier_who">सप्लायर</string>
+<string name="transactions_label">लेन-देन</string>
 </resources>

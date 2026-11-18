@@ -294,4 +294,18 @@
 <string name="ai_stock_value">Stock value</string>
 <string name="ai_top_customers_title">Customers with pending payment</string>
 <string name="ai_none">None</string>
+<string name="recycle_bin">Recycle bin</string>
+<string name="bin_hint">Deleted customers, suppliers, transactions, expenses, products and staff are kept here with their details, so records can be reviewed and brought back.</string>
+<string name="bin_empty">The recycle bin is empty</string>
+<string name="bin_restore">Restore</string>
+<string name="bin_deleted_at">Deleted at</string>
+<string name="bin_type">Type</string>
+<string name="bin_restore_done">Restored</string>
+<string name="bin_party_missing">Cannot restore: the original customer or supplier no longer exists. Restore or re-create the party first.</string>
+<string name="bin_restore_failed">Restore failed</string>
+<string name="bin_purge">Delete permanently</string>
+<string name="bin_purge_confirm">Permanently delete \"%1$s\" from the recycle bin? This cannot be undone.</string>
+<string name="customer_who">Customer</string>
+<string name="supplier_who">Supplier</string>
+<string name="transactions_label">Transaction</string>
 </resources>

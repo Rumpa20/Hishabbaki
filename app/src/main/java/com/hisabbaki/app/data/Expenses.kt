@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import java.util.Calendar
+import org.json.JSONObject
 
 data class ExpenseCategory(val id: Long, val name: String)
 
@@ -30,7 +31,10 @@ data class ExpenseStats(
 )
 
 /** Blocking expense methods. Call only through Db.async. */
-class ExpenseRepo private constructor(private val helper: DatabaseHelper) {
+class ExpenseRepo private constructor(
+    private val helper: DatabaseHelper,
+    private val appContext: Context
+) {
 
     companion object {
         const val REC_NONE = "NONE"
@@ -38,7 +42,7 @@ class ExpenseRepo private constructor(private val helper: DatabaseHelper) {
         const val REC_WEEKLY = "WEEKLY"
         const val REC_MONTHLY = "MONTHLY"
 
-        fun get(context: Context): ExpenseRepo = ExpenseRepo(DatabaseHelper.get(context))
+        fun get(context: Context): ExpenseRepo = ExpenseRepo(DatabaseHelper.get(context), context.applicationContext)
 
         fun dayStart(ms: Long): Long {
             val cal = Calendar.getInstance()
@@ -217,6 +221,22 @@ class ExpenseRepo private constructor(private val helper: DatabaseHelper) {
     }
 
     fun deleteExpense(businessId: Int, id: Long) {
+        val expense = getExpense(businessId, id)
+        if (expense != null) {
+            CoreRepo.get(appContext).saveToBin(
+                businessId, "expense", expense.title,
+                JSONObject()
+                    .put("category", expense.categoryName)
+                    .put("title", expense.title)
+                    .put("amount", expense.amountPaise)
+                    .put("date", expense.expenseDate)
+                    .put("method", expense.paymentMethod)
+                    .put("notes", expense.notes)
+                    .put("attachment", expense.attachmentPath)
+                    .put("recurrence", expense.recurrence)
+                    .toString()
+            )
+        }
         helper.writableDatabase.delete(
             "expenses", "id = ? AND business_id = ?",
             arrayOf(id.toString(), businessId.toString())
