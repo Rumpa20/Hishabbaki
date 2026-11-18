@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hint_upi_id">ইউপিআই আইডি (পেমেন্ট নেওয়ার জন্য)</string>
+    <string name="role_owner">মালিক</string>
+    <string name="role_administrator">প্রশাসক</string>
+    <string name="role_manager">ম্যানেজার</string>
+    <string name="role_accountant">হিসাবরক্ষক</string>
+    <string name="role_employee">কর্মী</string>
+</resources>

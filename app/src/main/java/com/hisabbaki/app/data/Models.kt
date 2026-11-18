@@ -74,12 +74,14 @@ data class DashboardStats(
 class DuplicateMobileException : Exception("Duplicate mobile number")
 
 data class BusinessProfile(
+    val id: Int = 1,
     val name: String,
     val owner: String,
     val mobile: String,
     val address: String,
     val gstin: String,
-    val logoPath: String
+    val logoPath: String,
+    val upiId: String = ""
 )
 
 data class ReminderRecord(

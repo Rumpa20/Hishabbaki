@@ -4,13 +4,18 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.hisabbaki.app.Prefs
 import java.util.Calendar
 
 /** All methods are blocking. Call them only through Db.async (background thread). */
-class Repository private constructor(private val helper: DatabaseHelper) {
+class Repository private constructor(
+    private val appContext: Context,
+    private val helper: DatabaseHelper
+) {
 
     companion object {
-        fun get(context: Context): Repository = Repository(DatabaseHelper.get(context))
+        fun get(context: Context): Repository =
+            Repository(context.applicationContext, DatabaseHelper.get(context))
 
         private fun table(isSupplier: Boolean): String = if (isSupplier) "suppliers" else "customers"
 
@@ -278,40 +283,30 @@ class Repository private constructor(private val helper: DatabaseHelper) {
 
     // ------------------------------------------------------------ business profile
 
-    fun getBusinessProfile(): BusinessProfile =
-        helper.readableDatabase.rawQuery(
-            "SELECT business_name, owner_name, mobile, address, gstin, logo_path FROM business_profile WHERE id = 1",
-            null
-        ).use { c ->
-            if (c.moveToFirst()) {
-                BusinessProfile(
-                    name = c.getString(0) ?: "",
-                    owner = c.getString(1) ?: "",
-                    mobile = c.getString(2) ?: "",
-                    address = c.getString(3) ?: "",
-                    gstin = c.getString(4) ?: "",
-                    logoPath = c.getString(5) ?: ""
-                )
-            } else {
-                BusinessProfile("", "", "", "", "", "")
-            }
-        }
+    fun getBusinessProfile(): BusinessProfile {
+        val core = CoreRepo.get(appContext)
+        val b = core.activeBusiness(Prefs.currentBusinessId(appContext))
+        return BusinessProfile(
+            id = b.id,
+            name = b.name,
+            owner = b.owner,
+            mobile = b.mobile,
+            address = b.address,
+            gstin = b.gstin,
+            logoPath = b.logoPath,
+            upiId = b.upiId
+        )
+    }
 
     fun saveBusinessProfile(p: BusinessProfile) {
-        val cv = ContentValues()
-        cv.put("business_name", p.name)
-        cv.put("owner_name", p.owner)
-        cv.put("mobile", p.mobile)
-        cv.put("address", p.address)
-        cv.put("gstin", p.gstin)
-        cv.put("logo_path", p.logoPath)
-        val db = helper.writableDatabase
-        val rows = db.update("business_profile", cv, "id = 1", null)
-        if (rows == 0) {
-            cv.put("id", 1)
-            db.insertOrThrow("business_profile", null, cv)
-        }
+        CoreRepo.get(appContext).saveBusiness(
+            if (p.id != 0) p.id else Prefs.currentBusinessId(appContext),
+            p.name, p.owner, p.mobile, p.address, p.gstin, p.logoPath, p.upiId, "INR"
+        )
     }
+
+    private fun Context.activeBiz(): Int = Prefs.currentBusinessId(this)
+
 
     // ------------------------------------------------------------ reminders
 

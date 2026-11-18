@@ -12,6 +12,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.hisabbaki.app.Prefs
 import com.hisabbaki.app.data.BusinessProfile
 import com.hisabbaki.app.data.Db
 import com.hisabbaki.app.data.Repository
@@ -27,6 +28,7 @@ class BusinessProfileActivity : AppCompatActivity() {
     }
 
     private var hasLogo = false
+    private var businessId = 1
 
     private lateinit var tilMobile: TextInputLayout
     private lateinit var tilGstin: TextInputLayout
@@ -35,6 +37,7 @@ class BusinessProfileActivity : AppCompatActivity() {
     private lateinit var etMobile: TextInputEditText
     private lateinit var etAddress: TextInputEditText
     private lateinit var etGstin: TextInputEditText
+    private lateinit var etUpiId: TextInputEditText
     private lateinit var ivLogo: ImageView
     private lateinit var btnSave: MaterialButton
 
@@ -42,8 +45,8 @@ class BusinessProfileActivity : AppCompatActivity() {
         if (uri != null) {
             val appCtx = applicationContext
             Db.async({
-                val ok = LogoStore.saveFromUri(appCtx, uri)
-                if (ok) LogoStore.loadFile(appCtx) else null
+                val ok = LogoStore.saveFromUri(appCtx, uri, businessId)
+                if (ok) LogoStore.loadFile(appCtx, businessId) else null
             }) { result ->
                 if (isFinishing || isDestroyed) return@async
                 val bmp = result.getOrNull()
@@ -63,6 +66,7 @@ class BusinessProfileActivity : AppCompatActivity() {
 
         findViewById<MaterialToolbar>(R.id.toolbar).setNavigationOnClickListener { finish() }
 
+        businessId = Prefs.currentBusinessId(this)
         tilMobile = findViewById(R.id.tilBizMobile)
         tilGstin = findViewById(R.id.tilGstin)
         etName = findViewById(R.id.etBizName)
@@ -70,12 +74,13 @@ class BusinessProfileActivity : AppCompatActivity() {
         etMobile = findViewById(R.id.etBizMobile)
         etAddress = findViewById(R.id.etBizAddress)
         etGstin = findViewById(R.id.etGstin)
+        etUpiId = findViewById(R.id.etUpiId)
         ivLogo = findViewById(R.id.ivLogo)
         btnSave = findViewById(R.id.btnSave)
 
         findViewById<MaterialButton>(R.id.btnChooseLogo).setOnClickListener { logoPicker.launch("image/*") }
         findViewById<MaterialButton>(R.id.btnRemoveLogo).setOnClickListener {
-            LogoStore.delete(applicationContext)
+            LogoStore.delete(applicationContext, businessId)
             hasLogo = false
             showLogo(null)
         }
@@ -85,7 +90,7 @@ class BusinessProfileActivity : AppCompatActivity() {
             load()
         } else {
             hasLogo = savedInstanceState.getBoolean(STATE_LOGO, false)
-            showLogo(if (hasLogo) LogoStore.loadFile(applicationContext) else null)
+            showLogo(if (hasLogo) LogoStore.loadFile(applicationContext, businessId) else null)
         }
     }
 
@@ -98,7 +103,8 @@ class BusinessProfileActivity : AppCompatActivity() {
         val appCtx = applicationContext
         Db.async({
             val profile = Repository.get(appCtx).getBusinessProfile()
-            Pair(profile, if (profile.logoPath.isNotBlank()) LogoStore.loadFile(appCtx) else null)
+            Pair(profile, if (profile.logoPath.isNotBlank())
+                LogoStore.loadFile(appCtx, profile.id) else null)
         }) { result ->
             if (isFinishing || isDestroyed) return@async
             result.onSuccess { data ->
@@ -108,6 +114,7 @@ class BusinessProfileActivity : AppCompatActivity() {
                 etMobile.setText(p.mobile)
                 etAddress.setText(p.address)
                 etGstin.setText(p.gstin)
+                etUpiId.setText(p.upiId)
                 hasLogo = data.second != null
                 showLogo(data.second)
             }
@@ -150,12 +157,14 @@ class BusinessProfileActivity : AppCompatActivity() {
         if (!valid) return
 
         val profile = BusinessProfile(
+            id = Prefs.currentBusinessId(this),
             name = etName.text.toString().trim(),
             owner = etOwner.text.toString().trim(),
             mobile = mobile,
             address = etAddress.text.toString().trim(),
             gstin = gstin,
-            logoPath = if (hasLogo) LogoStore.FILE_NAME else ""
+            logoPath = if (hasLogo) LogoStore.fileNameFor(Prefs.currentBusinessId(this)) else "",
+            upiId = etUpiId.text.toString().trim()
         )
         btnSave.isEnabled = false
         val appCtx = applicationContext
