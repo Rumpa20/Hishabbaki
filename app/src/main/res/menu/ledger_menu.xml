@@ -12,6 +12,10 @@
         android:title="@string/edit"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_upi"
+        android:title="@string/upi_collect" />
+
+    <item
         android:id="@+id/action_reminder"
         android:title="@string/send_reminder"
         app:showAsAction="never" />

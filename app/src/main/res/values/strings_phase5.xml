@@ -211,4 +211,9 @@
     <string name="quick_actions">Quick actions</string>
     <string name="dash_business_overview">Business overview</string>
     <string name="dash_stock_line">%1$d products · %2$d low stock · Stock value %3$s</string>
+    <string name="share">Share</string>
+    <string name="upi_qr">UPI QR code</string>
+    <string name="upi_not_set">Set your business UPI ID first (Business profile).</string>
+    <string name="upi_qr_note">The customer pays in their UPI app. Hishabbaki records the payment only after you add it yourself.</string>
+    <string name="upi_collect">Collect via UPI QR</string>
 </resources>

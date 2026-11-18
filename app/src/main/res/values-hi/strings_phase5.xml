@@ -211,4 +211,9 @@
     <string name="quick_actions">त्वरित कार्य</string>
     <string name="dash_business_overview">व्यापार अवलोकन</string>
     <string name="dash_stock_line">%1$d उत्पाद · %2$d कम स्टॉक · स्टॉक मूल्य %3$s</string>
+    <string name="share">साझा करें</string>
+    <string name="upi_qr">यूपीआई क्यूआर कोड</string>
+    <string name="upi_not_set">पहले व्यापार की यूपीआई आईडी सेट करें (व्यापार प्रोफ़ाइल)।</string>
+    <string name="upi_qr_note">ग्राहक अपने यूपीआई ऐप से भुगतान करेगा। आपके द्वारा स्वयं जोड़ने से पहले Hishabbaki भुगतान दर्ज नहीं करेगा।</string>
+    <string name="upi_collect">यूपीआई क्यूआर से वसूली</string>
 </resources>

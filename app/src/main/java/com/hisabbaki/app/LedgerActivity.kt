@@ -32,6 +32,7 @@ import com.hisabbaki.app.util.LogoStore
 import com.hisabbaki.app.util.Money
 import com.hisabbaki.app.util.PdfExport
 import com.hisabbaki.app.util.PdfPrintAdapter
+import com.hisabbaki.app.util.UpiQr
 import java.io.File
 import java.io.FileOutputStream
 
@@ -91,12 +92,14 @@ class LedgerActivity : AppCompatActivity() {
         toolbar.inflateMenu(R.menu.ledger_menu)
         toolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_more)
         toolbar.menu.findItem(R.id.action_reminder)?.isVisible = !isSupplier
+        toolbar.menu.findItem(R.id.action_upi)?.isVisible = !isSupplier
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_call -> callParty()
                 R.id.action_edit_party -> editParty()
                 R.id.action_whatsapp -> openWhatsApp()
                 R.id.action_reminder -> openReminder()
+                R.id.action_upi -> showUpiQr()
                 R.id.action_share_pdf -> sharePdf()
                 R.id.action_download_pdf -> pdfLauncher.launch(pdfFileName())
                 R.id.action_print -> printPdf()
@@ -311,6 +314,75 @@ class LedgerActivity : AppCompatActivity() {
         val file = File(FileOps.shareDir(appCtx), FileOps.safeName(data.party.name) + "_ledger.pdf")
         FileOutputStream(file).use { PdfExport.ledger(this, profile, logo, data, it) }
         return file
+    }
+
+    private fun showUpiQr() {
+        val appCtx = applicationContext
+        val p = party
+        val supplier = isSupplier
+        val id = partyId
+        Db.async({
+            val profile = Repository.get(appCtx).getBusinessProfile()
+            val balance = p?.forYouPaise ?: 0L
+            Triple(profile.upiId, profile.name, balance)
+        }) { result ->
+            if (isFinishing || isDestroyed) return@async
+            result.onSuccess { triple ->
+                val upiId = triple.first
+                if (upiId.isBlank()) {
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.upi_qr)
+                        .setMessage(R.string.upi_not_set)
+                        .setPositiveButton(R.string.edit) { _, _ ->
+                            startActivity(
+                                android.content.Intent(
+                                    this, BusinessProfileActivity::class.java
+                                )
+                            )
+                        }
+                        .setNegativeButton(R.string.cancel, null)
+                        .show()
+                    return@onSuccess
+                }
+                val amount = if (supplier) 0L else triple.third.coerceAtLeast(0L)
+                val uriText = UpiQr.buildUri(
+                    upiId, triple.second, amount,
+                    getString(R.string.app_name) + " - " + (p?.name ?: "")
+                )
+                val view = layoutInflater.inflate(R.layout.dialog_upi_qr, null)
+                val iv = view.findViewById<android.widget.ImageView>(R.id.ivQr)
+                view.findViewById<android.widget.TextView>(R.id.tvQrUpi).text = upiId
+
+                val dialog = MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.upi_qr)
+                    .setView(view)
+                    .setPositiveButton(R.string.share, null)
+                    .setNegativeButton(R.string.cancel, null)
+                    .show()
+
+                Db.async({ UpiQr.bitmap(uriText, 640) }) { qrResult ->
+                    if (isFinishing || isDestroyed) return@async
+                    qrResult.onSuccess { bmp ->
+                        if (dialog.isShowing) iv.setImageBitmap(bmp)
+                        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+                            .setOnClickListener {
+                                Db.async({
+                                    val f = File(FileOps.shareDir(appCtx), "upi_qr.png")
+                                    f.outputStream().use { bmp.compress(
+                                        android.graphics.Bitmap.CompressFormat.PNG, 100, it
+                                    ) }
+                                    f
+                                }) { shareResult ->
+                                    if (isFinishing || isDestroyed) return@async
+                                    shareResult.onSuccess {
+                                        FileOps.share(this, it, "image/png", getString(R.string.share))
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        }
     }
 
     private fun sharePdf() {
