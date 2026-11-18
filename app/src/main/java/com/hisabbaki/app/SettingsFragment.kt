@@ -87,6 +87,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         view.findViewById<View>(R.id.rowExpenses).setOnClickListener {
             startActivity(Intent(requireContext(), ExpensesActivity::class.java))
         }
+        view.findViewById<View>(R.id.rowBilling).setOnClickListener {
+            startActivity(Intent(requireContext(), InvoicesActivity::class.java))
+        }
         view.findViewById<View>(R.id.rowExport).setOnClickListener { showExportDialog() }
         view.findViewById<View>(R.id.rowBackup).setOnClickListener { showBackupDialog() }
         view.findViewById<View>(R.id.rowPrivacy).setOnClickListener {
